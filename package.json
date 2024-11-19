@@ -7,7 +7,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev2": "concurrently \"vite build --watch\" \"nodemon server/index.js\"",
+    "dev2": "concurrently \"vite build --watch\" \"nodemon server/index.js --ignore server/sessions\"",
     "migrate": "npx prisma generate --schema=./server/prisma/schema.prisma && prisma migrate deploy --schema=./server/prisma/schema.prisma",
     "heroseed": "npx prisma generate --schema=./server/prisma/schema.prisma && node scripts/seed",
     "proc": "npx prisma generate --schema=./server/prisma/schema.prisma && node server/index.js"

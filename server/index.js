@@ -4,6 +4,9 @@ const morgan = require("morgan");
 const parser = require("body-parser");
 const path = require("path");
 
+const cron = require("node-cron");
+const axios = require("axios");
+
 const port = process.env.PORT || 4009;
 
 const { createServer } = require("vite");
@@ -27,6 +30,19 @@ const v = async function () {
 
   app.use(vite.middlewares);
 };
+
+//cron schedule tasks
+// Schedule the task to run at minute 14, 29, 44, and 59 of every hour
+cron.schedule("14,29,44,59 * * * *", async () => {
+  console.log("Running task at minute 14, 29, 44, and 59");
+  await axios.get("http://localhost:4009/api/bingo/test");
+});
+
+// async function f() {
+//   await axios.get("/api/bingo/test");
+// }
+
+// f();
 
 //api routes
 app.use("/api", require("./api/api"));
