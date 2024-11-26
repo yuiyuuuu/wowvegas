@@ -38,12 +38,14 @@ cron.schedule("14,29,44,59 * * * *", async () => {
   await axios.get("http://localhost:4009/api/bingo/wowvegas");
 });
 
-//wowvegas claim daily reward, 12:05AM everyday
-cron.schedule("5 0 * * *", async () => {
-  console.log("Running task at 12:05 AM");
+//wowvegas claim daily reward, 12:08AM everyday
+cron.schedule("8 0 * * *", async () => {
+  console.log("Running task at 12:08 AM");
   // Call your function here
   await axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
 });
+
+axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
 
 //api routes
 app.use("/api", require("./api/api"));

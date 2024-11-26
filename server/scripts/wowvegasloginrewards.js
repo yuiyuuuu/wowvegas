@@ -43,7 +43,7 @@ async function run(obj) {
   //close the browser
   setTimeout(async () => {
     await browser.close();
-  }, 10000);
+  }, 12000);
 }
 
 // run({
