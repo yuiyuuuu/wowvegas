@@ -1,8 +1,6 @@
 const puppeteer = require("puppeteer");
 const path = require("path");
 
-const { execSync } = require("child_process");
-
 //find iframe and retry
 async function findFrameWithRetry(
   page,
@@ -63,14 +61,6 @@ async function runTest(obj) {
   // Open a new page
   const page = await browser.newPage();
 
-  page.on("frameattached", (frame) => {
-    console.log(`Frame attached: ${frame.url()}`);
-  });
-
-  page.on("framedetached", (frame) => {
-    console.log(`Frame attached: ${frame.url()}`);
-  });
-
   //   await page.setViewport({ width: 1920, height: 1080 });
 
   //go to lobby on wow vegas
@@ -97,7 +87,7 @@ async function runTest(obj) {
     //find the sc currency and click on it
     const sc = await page.$('#top-bar button[role="menuitem"]');
     sc.click();
-  }, 1000);
+  }, 2000);
 
   //go to the bingo link after 3 second delay
   setTimeout(async () => {
@@ -131,7 +121,6 @@ async function runTest(obj) {
       nestedIframe = await findFrameWithRetry(topframe, "#gameFrame"); // Replace with your frame selector
 
       //   nestedIframe = await topframe.$("#gameFrame");
-      console.log(nestedIframe, "Frame found!");
 
       //   nestedIframe = await nestedIframeHandle.contentFrame();
 
@@ -158,14 +147,6 @@ async function runTest(obj) {
           if (title.toLowerCase() === "bingo freeway") {
             console.log("found free room");
 
-            //find the play button and click it for the free room
-            // await room.$(".room__item-play-button > button").click();
-            // const c = await room.$(".room__item-play-button > button", {
-            //   visible: true,
-            // });
-            // await c.click();
-            // console.log(c, "csdcjskdc");
-
             await room.evaluate((roomElement) => {
               const button = roomElement.querySelector(
                 ".room__item-play-button > button"
@@ -175,6 +156,18 @@ async function runTest(obj) {
             });
           }
         }
+
+        // //close the popup
+        // await nestedIframe.waitForSelector(".popup__close-button", {
+        //   visible: true,
+        // });
+
+        // await new Promise((resolve) => {
+        //   setTimeout(async () => {
+        //     await nestedIframe.click(".popup__close-button");
+        //     resolve();
+        //   }, 3000);
+        // });
 
         //find and click the quick buy button
         await nestedIframe.waitForSelector("#quick-buy-button", {
@@ -193,13 +186,6 @@ async function runTest(obj) {
         setTimeout(async () => {
           await nestedIframe.click(".popup__button-shaded");
         }, 3000);
-
-        // await nestedIframe.evaluate(() => {
-        //   const claimButton = document.querySelector("#quick-buy-button");
-        //   console.log(claimButton, "button claim");
-
-        //   if (claimButton) claimButton.click();
-        // });
       }
     } catch (error) {
       console.log(error);
@@ -216,7 +202,7 @@ async function runTest(obj) {
 // runTest({
 //   username: process.env.LOGIN_1,
 //   password: process.env.LOGIN_1_PW,
-//   folder: "session",
+//   folder: "../sessions/session",
 // }).catch((error) => {
 //   console.error("Error running Puppeteer test:", error);
 // });

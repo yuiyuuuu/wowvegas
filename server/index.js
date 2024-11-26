@@ -32,17 +32,18 @@ const v = async function () {
 };
 
 //cron schedule tasks
-// Schedule the task to run at minute 14, 29, 44, and 59 of every hour
+//wowvegas bingo every 15 minutes
 cron.schedule("14,29,44,59 * * * *", async () => {
   console.log("Running task at minute 14, 29, 44, and 59");
-  await axios.get("http://localhost:4009/api/bingo/test");
+  await axios.get("http://localhost:4009/api/bingo/wowvegas");
 });
 
-// async function f() {
-//   await axios.get("/api/bingo/test");
-// }
-
-// f();
+//wowvegas claim daily reward, 12:05AM everyday
+cron.schedule("5 0 * * *", async () => {
+  console.log("Running task at 12:05 AM");
+  // Call your function here
+  await axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
+});
 
 //api routes
 app.use("/api", require("./api/api"));
