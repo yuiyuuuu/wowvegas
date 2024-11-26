@@ -45,8 +45,6 @@ cron.schedule("8 0 * * *", async () => {
   await axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
 });
 
-axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
-
 //api routes
 app.use("/api", require("./api/api"));
 
