@@ -92,9 +92,16 @@ async function runTest(obj) {
   //go to the bingo link after 3 second delay
   setTimeout(async () => {
     await page.goto("https://www.wowvegas.com/play/bingo", {
-      waitUntil: "networkidle2",
+      waitUntil: "load",
     });
   }, 3000);
+
+  //5 seconds delay to allow page to load
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 5000);
+  });
 
   //nested iframes. find the first
   await page.waitForSelector("main > div > div > iframe");
@@ -127,6 +134,7 @@ async function runTest(obj) {
       if (nestedIframe) {
         await nestedIframe.waitForSelector(".room__item--inner-wrapper", {
           visible: true,
+          timeout: 60000,
         });
 
         const bingoRooms = await nestedIframe.$$(".room__item--inner-wrapper");
@@ -143,6 +151,8 @@ async function runTest(obj) {
             (el) => el.textContent,
             titleElement
           );
+
+          console.log(title, "title");
 
           if (title.toLowerCase() === "bingo freeway") {
             console.log("found free room");
