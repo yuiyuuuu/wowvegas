@@ -84,6 +84,8 @@ async function runTest(obj) {
   //switch currency to sc
   await page.locator('#top-bar button[aria-expanded="false"]').click();
   setTimeout(async () => {
+    await page.waitForSelector('#top-bar button[role="menuitem"]');
+
     //find the sc currency and click on it
     const sc = await page.$('#top-bar button[role="menuitem"]');
     sc.click();
@@ -144,7 +146,8 @@ async function runTest(obj) {
             titleElement
           );
 
-          if (title.toLowerCase() === "bingo freeway") {
+          // if (title.toLowerCase() === "bingo freeway") {
+          if (title.toLowerCase() === "thanksgiving free bingo") {
             console.log("found free room");
 
             await room.evaluate((roomElement) => {

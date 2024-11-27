@@ -207,12 +207,12 @@ async function runTest(obj) {
 }
 
 // // Run the function
-runTest({
-  username: process.env.LOGIN_1,
-  password: process.env.LOGIN_1_PW,
-  folder: "session",
-}).catch((error) => {
-  console.error("Error running Puppeteer test:", error);
-});
+// runTest({
+//   username: process.env.LOGIN_1,
+//   password: process.env.LOGIN_1_PW,
+//   folder: "session",
+// }).catch((error) => {
+//   console.error("Error running Puppeteer test:", error);
+// });
 
 module.exports = { runTest };
