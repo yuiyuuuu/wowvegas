@@ -77,19 +77,7 @@ async function runTest(obj) {
       waitUntil: "load",
     });
 
-<<<<<<< HEAD
     await page.waitForSelector("main > div > div > iframe");
-=======
-  //5 seconds delay to allow page to load
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 5000);
-  });
-
-  //nested iframes. find the first
-  await page.waitForSelector("main > div > div > iframe");
->>>>>>> a6a340f521f9e3e4a6eb3c6bf3d27fcf9701e911
 
     const t = await page.$("main > div > div > iframe");
     const topframe = await t.contentFrame();
@@ -112,15 +100,7 @@ async function runTest(obj) {
             titleElement
           );
 
-<<<<<<< HEAD
           if (title.toLowerCase() === "bingo freeway!") {
-=======
-          console.log(title, "title");
-
-          if (title.toLowerCase() === "bingo freeway") {
-            console.log("found free room");
-
->>>>>>> a6a340f521f9e3e4a6eb3c6bf3d27fcf9701e911
             await room.evaluate((roomElement) => {
               const button = roomElement.querySelector(
                 ".room__item-play-button > button"
