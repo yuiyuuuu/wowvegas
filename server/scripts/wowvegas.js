@@ -42,163 +42,93 @@ async function findFrameWithRetry(
 }
 
 async function runTest(obj) {
-  //kill all chromium sessions before running
-  //   try {
-  //     execSync("pkill -f Chromium"); // MacOS command to kill all Chromium instances
-  //   } catch (error) {
-  //     console.log("No existing Chromium instances found");
-  //   }
-
   const userDataDir = path.resolve(__dirname, obj.folder);
 
-  // Launch a new browser instance
-  let browser = await puppeteer.launch({
-    headless: false, // Set to `true` to run in headless mode
-    args: ["--no-sandbox", "--disable-setuid-sandbox"], // Optional for Heroku or secure environments
-    userDataDir,
-  });
+  let browser;
+  try {
+    // Launch a new browser instance
+    browser = await puppeteer.launch({
+      headless: false,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      userDataDir,
+    });
 
-  // Open a new page
-  const page = await browser.newPage();
+    const page = await browser.newPage();
+    const url = "https://www.wowvegas.com/lobby";
+    await page.goto(url, { waitUntil: "networkidle2" });
 
-  //   await page.setViewport({ width: 1920, height: 1080 });
-
-  //go to lobby on wow vegas
-  const url = "https://www.wowvegas.com/lobby";
-  await page.goto(url, { waitUntil: "networkidle2" });
-
-  //log in, if not already
-  if (page.url() === "https://www.wowvegas.com/login?redirect=/lobby") {
-    await page.type("#email", obj.username, { delay: 100 });
-    await page.type("#password", obj.password, { delay: 100 });
-
-    //wait a second
-    setTimeout(async () => {
+    // Handle login
+    if (page.url() === "https://www.wowvegas.com/login?redirect=/lobby") {
+      await page.type("#email", obj.username, { delay: 100 });
+      await page.type("#password", obj.password, { delay: 100 });
       await page.click("button[type='submit']");
-    }, 1000);
-  }
+      await page.waitForNavigation({ waitUntil: "networkidle2" });
+    }
 
-  //   //everything below will be logged in
-  //   await page.goto("https://www.wowvegas.com/play/bingo");
-
-  //switch currency to sc
-  await page.locator('#top-bar button[aria-expanded="false"]').click();
-  setTimeout(async () => {
+    // Switch currency to SC
+    await page.waitForSelector('#top-bar button[aria-expanded="false"]');
+    await page.click('#top-bar button[aria-expanded="false"]');
     await page.waitForSelector('#top-bar button[role="menuitem"]');
-
-    //find the sc currency and click on it
     const sc = await page.$('#top-bar button[role="menuitem"]');
-    sc.click();
-  }, 2000);
+    if (sc) await sc.click();
 
-  //go to the bingo link after 3 second delay
-  setTimeout(async () => {
+    // Navigate to bingo and handle nested iframes
     await page.goto("https://www.wowvegas.com/play/bingo", {
       waitUntil: "networkidle2",
     });
-  }, 3000);
 
-  //nested iframes. find the first
-  await page.waitForSelector("main > div > div > iframe");
+    await page.waitForSelector("main > div > div > iframe");
 
-  //first iframe, there should only be one on each layer
-  const t = await page.$("main > div > div > iframe");
-  const topframe = await t.contentFrame();
+    const t = await page.$("main > div > div > iframe");
+    const topframe = await t.contentFrame();
 
-  if (topframe) {
-    //find second iframe
-    // const nested = await topframe.$("iframe");
-    // const nestedIframe = await nested.contentFrame();
-
-    // if (nestedIframe) {
-    //   await nestedIframe.waitForSelector(".room__item--inner-wrapper");
-    //   const bingoRooms = nestedIframe.$$(".room__item--inner-wrapper");
-    //   console.log(bingoRooms, "rooms");
-    // }
-
-    // let nestedIframeHandle;
-    let nestedIframe;
-
-    try {
-      nestedIframe = await findFrameWithRetry(topframe, "#gameFrame"); // Replace with your frame selector
-
-      //   nestedIframe = await topframe.$("#gameFrame");
-
-      //   nestedIframe = await nestedIframeHandle.contentFrame();
-
+    if (topframe) {
+      const nestedIframe = await findFrameWithRetry(topframe, "#gameFrame");
       if (nestedIframe) {
         await nestedIframe.waitForSelector(".room__item--inner-wrapper", {
           visible: true,
         });
-
         const bingoRooms = await nestedIframe.$$(".room__item--inner-wrapper");
 
-        console.log(bingoRooms, " B I N G O");
-
-        //find the one room that is free
         for (const room of bingoRooms) {
           const titleElement = await room.$(
             ".room__item-info > .room__item-name > p"
           );
-
           const title = await nestedIframe.evaluate(
             (el) => el.textContent,
             titleElement
           );
 
-          // if (title.toLowerCase() === "bingo freeway") {
-          if (title.toLowerCase() === "thanksgiving free bingo") {
-            console.log("found free room");
-
+          if (title.toLowerCase() === "bingo freeway!") {
             await room.evaluate((roomElement) => {
               const button = roomElement.querySelector(
                 ".room__item-play-button > button"
               );
-
               if (button) button.click();
             });
+
+            await nestedIframe.waitForSelector("#quick-buy-button", {
+              visible: true,
+            });
+            await nestedIframe.click("#quick-buy-button");
+
+            await nestedIframe.waitForSelector(".popup__button-shaded", {
+              visible: true,
+            });
+            await nestedIframe.click(".popup__button-shaded");
           }
         }
-
-        // //close the popup
-        // await nestedIframe.waitForSelector(".popup__close-button", {
-        //   visible: true,
-        // });
-
-        // await new Promise((resolve) => {
-        //   setTimeout(async () => {
-        //     await nestedIframe.click(".popup__close-button");
-        //     resolve();
-        //   }, 3000);
-        // });
-
-        //find and click the quick buy button
-        await nestedIframe.waitForSelector("#quick-buy-button", {
-          visible: true,
-        });
-
-        setTimeout(async () => {
-          await nestedIframe.click("#quick-buy-button");
-        }, 3000);
-
-        //click the claim button
-        await nestedIframe.waitForSelector(".popup__button-shaded", {
-          visible: true,
-        });
-
-        setTimeout(async () => {
-          await nestedIframe.click(".popup__button-shaded");
-        }, 3000);
       }
-    } catch (error) {
-      console.log(error);
     }
-  }
 
-  //close tab after  minutes, which is around when the bingo game will end
-  setTimeout(() => {
-    browser.close();
-  }, 360000);
+    // Schedule browser close
+    setTimeout(() => browser.close(), 360000); // Close after 6 minutes
+  } catch (error) {
+    console.error("Error occurred:", error);
+
+    // Close browser if it exists
+    if (browser) await browser.close();
+  }
 }
 
 // // Run the function

@@ -38,13 +38,20 @@ cron.schedule("14,29,44,59 * * * *", async () => {
   await axios.get("http://localhost:4009/api/bingo/wowvegas");
 });
 
-axios.get("http://localhost:4009/api/bingo/wowvegas");
+// axios.get("http://localhost:4009/api/bingo/wowvegas");
+// axios.get("http://localhost:4009/api/bingo/chumbadaily");
+// axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
+// axios.get("http://localhost:4009/api/bingo/dailypromotions");
 
 //wowvegas claim daily reward, 12:08AM everyday
 cron.schedule("8 0 * * *", async () => {
   console.log("Running task at 12:08 AM");
   // Call your function here
-  await axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
+  //currently gets:
+  //wowvegas daily bonus
+  //wowvegas daily sc email, sends only
+  //chumba daily sc
+  await axios.get("http://localhost:4009/api/bingo/dailypromotions");
 });
 
 //api routes
