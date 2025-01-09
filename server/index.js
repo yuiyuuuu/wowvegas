@@ -33,25 +33,31 @@ const v = async function () {
 
 //cron schedule tasks
 //wowvegas bingo every 15 minutes
-cron.schedule("14,29,44,59 * * * *", async () => {
+cron.schedule("14,26,44,59 * * * *", async () => {
   console.log("Running task at minute 14, 29, 44, and 59");
   await axios.get("http://localhost:4009/api/bingo/wowvegas");
 });
 
 // axios.get("http://localhost:4009/api/bingo/wowvegas");
-// axios.get("http://localhost:4009/api/bingo/chumbadaily");
+axios.get("http://localhost:4009/api/bingo/chumbadaily");
 // axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
 // axios.get("http://localhost:4009/api/bingo/dailypromotions");
 
-//wowvegas claim daily reward, 12:08AM everyday
+//wowvegas claim daily reward, 12:07am
+cron.schedule("7 0 * * *", async () => {
+  console.log("Running task at 12:08 AM");
+  // await axios.get("http://localhost:4009/api/bingo/dailypromotions");
+
+  //needs fix
+  // axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
+});
+
+//chumba claim daily reward, 12:08 am. One minute apart to prevent excessive ram usage
 cron.schedule("8 0 * * *", async () => {
   console.log("Running task at 12:08 AM");
-  // Call your function here
-  //currently gets:
-  //wowvegas daily bonus
-  //wowvegas daily sc email, sends only
-  //chumba daily sc
-  await axios.get("http://localhost:4009/api/bingo/dailypromotions");
+  // await axios.get("http://localhost:4009/api/bingo/dailypromotions");
+
+  axios.get("http://localhost:4009/api/bingo/chumbadaily");
 });
 
 //api routes

@@ -3,26 +3,29 @@ const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 
 const path = require("path");
 
+const axios = require("axios");
+
 puppeteer.use(StealthPlugin());
 
-async function run(obj, browser, resolveMain) {
+async function run(obj) {
   //check to see if this account has chumba login
-  const { chumba_user } = obj;
+  // const { username } = obj;
 
-  if (!chumba_user) return;
+  // if (!username) return;
 
   // let browser;
-  // const userDataDir = path.resolve(__dirname, obj.folder);
+  const userDataDir = path.resolve(__dirname, obj.folder);
+
+  // Launch a new browser instance
+  browser = await puppeteer.launch({
+    headless: false,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    userDataDir,
+  });
+
+  const page = await browser.newPage();
 
   try {
-    // Launch a new browser instance
-    // browser = await puppeteer.launch({
-    //   headless: false,
-    //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    //   userDataDir,
-    // });
-
-    const page = await browser.newPage();
     const url = "https://lobby.chumbacasino.com/";
     await page.goto(url, { waitUntil: "networkidle2" });
 
@@ -30,8 +33,8 @@ async function run(obj, browser, resolveMain) {
       console.log("ran1");
 
       // Type email and password
-      await page.type("#login_email-input", obj.chumba_user, { delay: 100 });
-      await page.type("#login_password-input", obj.chumba_password, {
+      await page.type("#login_email-input", obj.username, { delay: 100 });
+      await page.type("#login_password-input", obj.password, {
         delay: 100,
       });
 
@@ -51,7 +54,23 @@ async function run(obj, browser, resolveMain) {
     }
 
     // Wait a fixed amount of time for additional actions if needed
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // return;
+
+    if (!page.url().includes("https://lobby.chumbacasino.com")) {
+      //If it does not redirect to lobby, send message to discord and return
+      await axios.post(process.env.CHUMBA_DISCORD, {
+        content: `Email: ${obj.username}`,
+      });
+
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          browser.close();
+          resolve();
+        }, 4000);
+      });
+      return;
+    }
 
     console.log("ran3");
 
@@ -73,15 +92,15 @@ async function run(obj, browser, resolveMain) {
 
     await page.click("#daily-bonus__claim-btn");
 
+    //close page
     setTimeout(() => {
-      page.close();
-      resolveMain();
+      browser.close();
     }, 3000);
   } catch (error) {
     console.error(error);
 
     //close page
-    if (page) page.close();
+    if (browser) browser.close();
   }
 }
 

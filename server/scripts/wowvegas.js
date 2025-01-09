@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
 const path = require("path");
+const { getBrowser } = require("./helper/findExistingBrowserSession");
 
 //find iframe and retry
 async function findFrameWithRetry(
@@ -44,14 +45,14 @@ async function findFrameWithRetry(
 async function runTest(obj) {
   const userDataDir = path.resolve(__dirname, obj.folder);
 
-  let browser;
+  let browser = await getBrowser(userDataDir);
   try {
     // Launch a new browser instance
-    browser = await puppeteer.launch({
-      headless: false,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      userDataDir,
-    });
+    // browser = await puppeteer.launch({
+    //   headless: false,
+    //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    //   userDataDir,
+    // });
 
     const page = await browser.newPage();
     const url = "https://www.wowvegas.com/lobby";

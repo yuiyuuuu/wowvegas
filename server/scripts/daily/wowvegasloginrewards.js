@@ -1,14 +1,14 @@
 const puppeteer = require("puppeteer");
 const path = require("path");
 
-async function run(obj, browser, resolveMain) {
-  // const userDataDir = path.resolve(__dirname, obj.folder);
+async function run(obj) {
+  const userDataDir = path.resolve(__dirname, obj.folder);
 
-  // const browser = await puppeteer.launch({
-  //   headless: false,
-  //   args: ["--no-sandbox", "--disable-setuid-sandbox"], // Optional for Heroku or secure environments
-  //   userDataDir,
-  // });
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"], // Optional for Heroku or secure environments
+    userDataDir,
+  });
 
   const url = "https://www.wowvegas.com/lobby";
 
@@ -25,6 +25,14 @@ async function run(obj, browser, resolveMain) {
       await page.click("button[type='submit']");
     }, 1000);
   }
+
+  page.waitForNavigation({ waitUntil: "networkidle0" }); // Wait for navigation to complete
+
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 3000);
+  });
 
   //claim reward
   await page.goto("https://www.wowvegas.com/lobby/?claimBonus=BLUEDAILY");

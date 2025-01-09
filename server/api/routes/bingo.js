@@ -5,10 +5,14 @@ const prisma = require("../../prisma/prismaClient");
 const { runTest } = require("../../scripts/wowvegas");
 
 //daily reward
-const { run: dailyRewards } = require("../../scripts/wowvegasloginrewards");
+const {
+  run: dailyRewards,
+} = require("../../scripts/daily/wowvegasloginrewards");
 
 //chumba daily reward
-const { run: chumbaDailyRewards } = require("../../scripts/chumbaDailyLogin");
+const {
+  run: chumbaDailyRewards,
+} = require("../../scripts/daily/chumbaDailyLogin");
 const { claimDailyRewards } = require("../../scripts/dailyRewards");
 
 require("dotenv").config;
@@ -16,21 +20,35 @@ require("dotenv").config;
 module.exports = router;
 
 //hard coded logins for now
+//logins = wowvegas logins
+//different variables for different sites - each one will be its own process to not interfere with each other
 const logins = [
   {
     username: process.env.LOGIN_1,
     password: process.env.LOGIN_1_PW,
-    pulsz_user: process.env.PULSZ_LOGIN_1,
-    pulsz_password: process.env.PULSZ_PASSWORD_1,
-    chumba_user: process.env.CHUMBA_LOGIN_1,
-    chumba_password: process.env.CHUMBA_PASSWORD_1,
-    folder: "../sessions/session",
+    folder: "../../sessions/session",
   },
 
   {
     username: process.env.LOGIN_2,
     password: process.env.LOGIN_2_PW,
-    folder: "../sessions/session2",
+    folder: "../../sessions/session2",
+  },
+];
+
+const chumbaLogins = [
+  {
+    username: process.env.CHUMBA_LOGIN_1,
+    password: process.env.CHUMBA_PASSWORD_1,
+    folder: "../../sessions/chumba/session1",
+  },
+];
+
+const pulszLogins = [
+  {
+    username: process.env.PULSZ_LOGIN_1,
+    password: process.env.PULSZ_PASSWORD_1,
+    folder: "../../sessions/pulsz/session1",
   },
 ];
 
@@ -47,18 +65,18 @@ router.get("/wowvegas", async (req, res, next) => {
   }
 });
 
-router.get("/dailypromotions", async (req, res, next) => {
-  try {
-    for (let i = 0; i < logins.length; i++) {
-      const cur = logins[i];
-      await claimDailyRewards(cur);
-    }
+// router.get("/dailypromotions", async (req, res, next) => {
+//   try {
+//     for (let i = 0; i < logins.length; i++) {
+//       const cur = logins[i];
+//       await claimDailyRewards(cur);
+//     }
 
-    res.send("hiii!!!!<3");
-  } catch (error) {
-    next(error);
-  }
-});
+//     res.send("hiii!!!!<3");
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 router.get("/wowvegasdaily", async (req, res, next) => {
   try {
@@ -75,8 +93,8 @@ router.get("/wowvegasdaily", async (req, res, next) => {
 
 router.get("/chumbadaily", async (req, res, next) => {
   try {
-    for (let i = 0; i < logins.length; i++) {
-      const cur = logins[i];
+    for (let i = 0; i < chumbaLogins.length; i++) {
+      const cur = chumbaLogins[i];
       await chumbaDailyRewards(cur);
     }
 

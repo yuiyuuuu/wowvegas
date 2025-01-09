@@ -1,8 +1,8 @@
 const puppeteer = require("puppeteer");
 const path = require("path");
 
-const { run: claimWowVegas } = require("./wowvegasloginrewards");
-const { run: claimChumba } = require("./chumbaDailyLogin");
+const { run: claimWowVegas } = require("./daily/wowvegasloginrewards");
+const { run: claimChumba } = require("./daily/chumbaDailyLogin");
 
 async function claimDailyRewards(obj) {
   const userDataDir = path.resolve(__dirname, obj.folder);
