@@ -16,7 +16,7 @@ async function run(obj) {
   await page.goto(url, { waitUntil: "networkidle2" });
 
   //log in, if not already
-  if (page.url() === "https://www.wowvegas.com/login?redirect=/lobby") {
+  if (page.url().includes("https://www.wowvegas.com/login")) {
     await page.type("#email", obj.username, { delay: 100 });
     await page.type("#password", obj.password, { delay: 100 });
 
@@ -72,9 +72,9 @@ async function run(obj) {
   //wait 5 seconds and close the browser
   await new Promise((resolve) => {
     setTimeout(async () => {
-      await page.close();
+      await browser.close();
       resolve();
-      resolveMain();
+      // resolveMain();
     }, 5000);
   });
 

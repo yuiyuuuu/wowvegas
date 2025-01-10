@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const prisma = require("../../prisma/prismaClient");
 
+const path = require("path");
+
 //bingo
 const { runTest } = require("../../scripts/wowvegas");
 
@@ -26,13 +28,12 @@ const logins = [
   {
     username: process.env.LOGIN_1,
     password: process.env.LOGIN_1_PW,
-    folder: "../../sessions/session",
+    folder: path.resolve(__dirname, "../../sessions/session"),
   },
-
   {
     username: process.env.LOGIN_2,
     password: process.env.LOGIN_2_PW,
-    folder: "../../sessions/session2",
+    folder: path.resolve(__dirname, "../../sessions/session2"),
   },
 ];
 
@@ -40,7 +41,7 @@ const chumbaLogins = [
   {
     username: process.env.CHUMBA_LOGIN_1,
     password: process.env.CHUMBA_PASSWORD_1,
-    folder: "../../sessions/chumba/session1",
+    folder: path.resolve(__dirname, "../../sessions/chumba/session1"),
   },
 ];
 
@@ -48,7 +49,7 @@ const pulszLogins = [
   {
     username: process.env.PULSZ_LOGIN_1,
     password: process.env.PULSZ_PASSWORD_1,
-    folder: "../../sessions/pulsz/session1",
+    folder: path.resolve(__dirname, "../../sessions/pulsz/session1"),
   },
 ];
 

@@ -39,17 +39,16 @@ cron.schedule("14,26,44,59 * * * *", async () => {
 });
 
 // axios.get("http://localhost:4009/api/bingo/wowvegas");
-axios.get("http://localhost:4009/api/bingo/chumbadaily");
-// axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
+// axios.get("http://localhost:4009/api/bingo/chumbadaily");
+axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
 // axios.get("http://localhost:4009/api/bingo/dailypromotions");
 
-//wowvegas claim daily reward, 12:07am
-cron.schedule("7 0 * * *", async () => {
+//wowvegas claim daily reward, 12:09am
+cron.schedule("9 0 * * *", async () => {
   console.log("Running task at 12:08 AM");
   // await axios.get("http://localhost:4009/api/bingo/dailypromotions");
 
-  //needs fix
-  // axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
+  axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
 });
 
 //chumba claim daily reward, 12:08 am. One minute apart to prevent excessive ram usage
