@@ -1,6 +1,13 @@
 const puppeteer = require("puppeteer");
 const path = require("path");
 
+const vipLevels = {
+  //if the next tier is bronze, then the current tier is blue, etc
+  bronze: "https://www.wowvegas.com/lobby?claimBonus=blueDAILY",
+  silver: "https://www.wowvegas.com/lobby?claimBonus=bronzeDAILY",
+  gold: "https://www.wowvegas.com/lobby?claimBonus=silverDAILY",
+};
+
 async function run(obj) {
   const userDataDir = path.resolve(__dirname, obj.folder);
 
@@ -34,8 +41,21 @@ async function run(obj) {
     }, 3000);
   });
 
+  //find the vip tier level
+  const vip = await page.evaluate(() => {
+    const vipelement = Array.from(document.querySelectorAll("span")).find(
+      (t) => t?.innerText === "Progress to "
+    ).nextSibling.innerText;
+
+    // console.log(vipelement, "vipp");
+
+    return vipelement;
+  });
+
+  // console.log(vip, "vipp");
+
   //claim reward
-  await page.goto("https://www.wowvegas.com/lobby/?claimBonus=BLUEDAILY");
+  await page.goto(vipLevels[vip]);
 
   //wait 3 seconds and then go to the email competition page and click the email button
   await new Promise((resolve) => {

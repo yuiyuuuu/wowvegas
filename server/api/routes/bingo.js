@@ -17,6 +17,9 @@ const {
 } = require("../../scripts/daily/chumbaDailyLogin");
 const { claimDailyRewards } = require("../../scripts/dailyRewards");
 
+//stake daily reward
+const { run: stakeDailyRewards } = require("../../scripts/daily/stakeDaily");
+
 require("dotenv").config;
 
 module.exports = router;
@@ -50,6 +53,14 @@ const pulszLogins = [
     username: process.env.PULSZ_LOGIN_1,
     password: process.env.PULSZ_PASSWORD_1,
     folder: path.resolve(__dirname, "../../sessions/pulsz/session1"),
+  },
+];
+
+const stakeLogins = [
+  {
+    username: process.env.STAKE_LOGIN_1,
+    password: process.env.STAKE_PASSWORD_1,
+    folder: path.resolve(__dirname, "../../sessions/stake/session1"),
   },
 ];
 
@@ -97,6 +108,19 @@ router.get("/chumbadaily", async (req, res, next) => {
     for (let i = 0; i < chumbaLogins.length; i++) {
       const cur = chumbaLogins[i];
       await chumbaDailyRewards(cur);
+    }
+
+    res.send("hiii!!!!<3");
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/stakedaily", async (req, res, next) => {
+  try {
+    for (let i = 0; i < stakeLogins.length; i++) {
+      const cur = stakeLogins[i];
+      await stakeDailyRewards(cur);
     }
 
     res.send("hiii!!!!<3");
