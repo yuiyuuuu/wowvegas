@@ -40,7 +40,7 @@ cron.schedule("14,26,44,59 * * * *", async () => {
 
 // axios.get("http://localhost:4009/api/bingo/wowvegas");
 // axios.get("http://localhost:4009/api/bingo/chumbadaily");
-axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
+// axios.get("http://localhost:4009/api/bingo/wowvegasdaily");
 // axios.get("http://localhost:4009/api/bingo/dailypromotions");
 // axios.get("http://localhost:4009/api/bingo/stakedaily");
 
